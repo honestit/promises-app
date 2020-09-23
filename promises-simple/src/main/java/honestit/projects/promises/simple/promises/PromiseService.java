@@ -2,9 +2,9 @@ package honestit.projects.promises.simple.promises;
 
 public interface PromiseService {
 	
-	void makePromise();
+	MakePromiseResponse makePromise(MakePromiseRequest request);
 	
-	void makePromises();
+	MakePromisesResponse makePromises(MakePromiseRequest request, MakePromiseRequest... requests);
 	
-	void keptPromise();
+	KeptPromiseResponse keptPromise(KeptPromiseRequest request);
 }

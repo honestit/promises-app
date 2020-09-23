@@ -2,7 +2,7 @@ package honestit.projects.promises.simple.friends;
 
 public interface FriendService {
 	
-	void makeFriend();
+	MakeFriendResponse makeFriend(MakeFriendRequest request);
 	
-	void isFriend();
+	CheckFriendResponse checkFriend(CheckFriendRequest request);
 }

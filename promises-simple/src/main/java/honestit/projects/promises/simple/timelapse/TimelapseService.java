@@ -2,7 +2,7 @@ package honestit.projects.promises.simple.timelapse;
 
 public interface TimelapseService {
 	
-	void outdatedPromises();
+	OutdatedPromisesResponse outdatedPromises(OutdatedPromisesRequest request);
 	
-	void incomingPromises();
+	IncomingPromisesResponse incomingPromises(IncomingPromisesRequest request);
 }

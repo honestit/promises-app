@@ -2,7 +2,7 @@ package honestit.projects.promises.simple.users;
 
 public interface UserService {
 	
-	void register();
+	UserRegisterResponse register(UserRegisterRequest request);
 	
-	void deactivate();
+	UserDeactivateResponse deactivate(UserDeactivateRequest request);
 }
