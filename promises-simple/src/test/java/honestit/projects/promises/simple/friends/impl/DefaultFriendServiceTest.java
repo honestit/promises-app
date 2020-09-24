@@ -14,8 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
+import static org.assertj.core.api.Assertions.*;
 
 class DefaultFriendServiceTest {
 
@@ -31,7 +30,7 @@ class DefaultFriendServiceTest {
     }
 
     @Test
-    @DisplayName("Make new friend")
+    @DisplayName("New friend should be created")
     public void makeNewFriend() {
         Mockito.when(friendRepository.save(ArgumentMatchers.any(Friend.class))).thenAnswer(invocation -> {
             invocation.getArgument(0, Friend.class).setId(1L);
@@ -46,7 +45,7 @@ class DefaultFriendServiceTest {
     }
 
     @Test
-    @DisplayName("Make new friend should be connected to user")
+    @DisplayName("New friend should be connected to user")
     public void makeNewFriendWithConnectUser() {
         Friend friend = new Friend();
         friend.setId(1L);
@@ -64,5 +63,14 @@ class DefaultFriendServiceTest {
         assertThat(argumentCaptor.getValue()).isNotNull();
         assertThat(argumentCaptor.getValue().getOwner()).isNotNull();
         assertThat(argumentCaptor.getValue().getOwner().getUsername()).isEqualTo("User");
+    }
+
+    @Test
+    @DisplayName("Make friend with name of existing friend should throw exception")
+    public void makeNewFriendWithExistingNameShouldThrowException() {
+        Mockito.when(friendRepository.existsByNameAndOwnerUsername("Joe", "User")).thenReturn(true);
+
+        MakeFriendRequest request = new MakeFriendRequest("Joe", "User");
+        assertThatThrownBy(() -> friendService.makeFriend(request)).isInstanceOf(RuntimeException.class);
     }
 }

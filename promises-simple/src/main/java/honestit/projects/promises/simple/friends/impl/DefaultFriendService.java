@@ -24,6 +24,11 @@ public class DefaultFriendService implements FriendService {
 	@Override
 	public MakeFriendResponse makeFriend(MakeFriendRequest request) {
 
+		if(friendRepository.existsByNameAndOwnerUsername(request.getName(), request.getUsername())){
+			throw new IllegalStateException("Friend with this name: " + request.getName() + "for this username: " +
+				request.getUsername() + " already exists.");
+		}
+
 		User user = userRepository.getByUsername(request.getUsername());
 
 		Friend friend = new Friend();
