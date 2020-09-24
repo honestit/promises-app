@@ -41,7 +41,7 @@ public class RegistrationPageController {
 			UserRegisterRequest request = new UserRegisterRequest(form.getUsername(), null, null, form.getPassword(),
 					form.getEmail());
 			UserRegisterResponse response = userService.register(request);
-			log.debug("Response form UserService: {}", response);
+			log.debug("Response from UserService: {}", response);
 			return "redirect:/login";
 		} catch (RuntimeException ex) {
 			results.reject(null, ex.getLocalizedMessage());
