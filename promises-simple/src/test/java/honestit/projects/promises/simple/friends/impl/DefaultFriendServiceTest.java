@@ -87,4 +87,16 @@ class DefaultFriendServiceTest {
         assertThat(response).isNotNull();
         assertThat(response).extracting("alreadyFriend").isNotNull().isEqualTo(false);
     }
+
+    @Test
+    @DisplayName("Check existing friend")
+    public void givenExistingFriend_whenCheckFriend_thenShouldReturnFound() {
+        Mockito.when(friendRepository.existsByNameAndOwnerUsername("Joe", "User")).thenReturn(true);
+
+        CheckFriendRequest request = new CheckFriendRequest("Joe", "User");
+        CheckFriendResponse response = friendService.checkFriend(request);
+
+        assertThat(response).isNotNull();
+        assertThat(response).extracting("alreadyFriend").isNotNull().isEqualTo(true);
+    }
 }
