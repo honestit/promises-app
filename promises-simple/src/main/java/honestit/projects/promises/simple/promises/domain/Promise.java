@@ -2,10 +2,7 @@ package honestit.projects.promises.simple.promises.domain;
 
 import honestit.projects.promises.simple.friends.domain.Friend;
 import honestit.projects.promises.simple.users.domain.User;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -15,6 +12,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "promises")
 @Getter @Setter @ToString @EqualsAndHashCode(of = "id")
+@AllArgsConstructor @NoArgsConstructor
 public class Promise {
 
     @Id
