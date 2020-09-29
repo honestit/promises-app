@@ -15,37 +15,50 @@ import honestit.projects.promises.simple.friends.domain.FriendRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service @Slf4j @RequiredArgsConstructor
+@Service
+@Slf4j
+@RequiredArgsConstructor
 public class DefaultFriendService implements FriendService {
 
-	private final FriendRepository friendRepository;
-	private final UserRepository userRepository;
+    private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
 
-	@Override
-	public MakeFriendResponse makeFriend(MakeFriendRequest request) {
+    @Override
+    public MakeFriendResponse makeFriend(MakeFriendRequest request) {
 
-		if(friendRepository.existsByNameAndOwnerUsername(request.getName(), request.getUsername())){
-			throw new IllegalStateException("Friend with this name: " + request.getName() + " for this username: " +
-				request.getUsername() + ", already exists.");
-		}
+        if (friendRepository.existsByNameAndOwnerUsername(request.getName(), request.getUsername())) {
+            throw new IllegalStateException("Friend with this name: " + request.getName() + " for this username: " +
+                    request.getUsername() + ", already exists.");
+        }
 
-		User user = userRepository.getByUsername(request.getUsername());
+        User user = userRepository.getByUsername(request.getUsername());
 
-		Friend friend = new Friend();
-		friend.setName(request.getName());
-		friend.setUsername(null);
-		friend.setOwner(user);
-		friend.setRelation(Relation.UNSPECIFIED);
+        Friend friend = new Friend();
+        friend.setName(request.getName());
+        friend.setUsername(null);
+        friend.setOwner(user);
+        friend.setRelation(Relation.UNSPECIFIED);
 
-		log.debug("Friend to save: {}", friend);
-		friendRepository.save(friend);
-		log.debug("Saved friend: {}", friend);
+        log.debug("Friend to save: {}", friend);
+        friendRepository.save(friend);
+        log.debug("Saved friend: {}", friend);
 
-		return new MakeFriendResponse(friend.getId());
-	}
+        return new MakeFriendResponse(friend.getId());
+    }
 
-	@Override
-	public CheckFriendResponse checkFriend(CheckFriendRequest request) {
-		return null;
-	}
+    @Override
+    public CheckFriendResponse checkFriend(CheckFriendRequest request) {
+
+        String friendName = request.getFriendName();
+        String username = request.getUsername();
+
+        CheckFriendResponse response = new CheckFriendResponse(true);
+
+        if (friendRepository.existsByNameAndOwnerUsername(friendName, username)) {
+            return response;
+        } else {
+            response.setAlreadyFriend(false);
+            return response;
+        }
+    }
 }
