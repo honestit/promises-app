@@ -8,6 +8,8 @@ import honestit.projects.promises.simple.promises.MakePromiseRequest;
 import honestit.projects.promises.simple.promises.MakePromiseResponse;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
+import honestit.projects.promises.simple.users.domain.User;
+import honestit.projects.promises.simple.users.domain.UserRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
@@ -22,13 +24,15 @@ class DefaultPromiseServiceTest {
 
     private DefaultPromiseService promiseService;
     private PromiseRepository promiseRepository;
+    private UserRepository userRepository;
     private FriendService friendService;
 
     @BeforeEach
     public void prepareTest() {
         promiseRepository = Mockito.mock(PromiseRepository.class);
         friendService = Mockito.mock(FriendService.class);
-        promiseService = new DefaultPromiseService(promiseRepository, friendService);
+        userRepository = Mockito.mock(UserRepository.class);
+        promiseService = new DefaultPromiseService(promiseRepository, friendService, userRepository);
     }
 
     @Nested
@@ -86,11 +90,34 @@ class DefaultPromiseServiceTest {
             Assertions.assertThat(captor.getValue().getWhom())
                     .isNotNull()
                     .extracting(Friend::getId)
-                        .isNotNull()
-                        .isEqualTo(1L);
+                    .isNotNull()
+                    .isEqualTo(1L);
 
         }
+
+        @Test
+        @DisplayName("When make promise then promise should have a user")
+        public void whenMakePromiseThenPromiseShouldHaveAUser() {
+            ArgumentCaptor<Promise> captor = ArgumentCaptor.forClass(Promise.class);
+            Mockito.when(promiseRepository.save(captor.capture())).thenReturn(new Promise());
+            Mockito.when(friendService.checkFriend(ArgumentMatchers.any())).thenReturn(new CheckFriendResponse(true, 1L));
+            User user = new User();
+            user.setId(1L);
+            user.setUsername("User");
+            Mockito.when(userRepository.getByUsername("User")).thenReturn(user);
+
+            promiseService.makePromise(defaultRequest);
+
+            Assertions.assertThat(captor.getValue()).isNotNull();
+            Assertions.assertThat(captor.getValue().getWho())
+                    .isNotNull()
+                    .extracting(User::getId)
+                    .isNotNull()
+                    .isEqualTo(1L);
+            Assertions.assertThat(captor.getValue().getWho())
+                    .extracting(User::getUsername)
+                    .isNotNull()
+                    .isEqualTo("User");
+        }
     }
-
-
 }

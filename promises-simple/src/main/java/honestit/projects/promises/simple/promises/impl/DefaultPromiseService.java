@@ -5,6 +5,7 @@ import honestit.projects.promises.simple.friends.domain.Friend;
 import honestit.projects.promises.simple.promises.*;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
+import honestit.projects.promises.simple.users.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ public class DefaultPromiseService implements PromiseService {
 
     private final PromiseRepository promiseRepository;
     private final FriendService friendService;
+    private final UserRepository userRepository;
 
     @Override
     public MakePromiseResponse makePromise(MakePromiseRequest request) {
