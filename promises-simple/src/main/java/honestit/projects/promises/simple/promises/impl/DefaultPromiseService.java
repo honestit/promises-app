@@ -27,22 +27,22 @@ public class DefaultPromiseService implements PromiseService {
         promise.setTillDay(request.getPromiseDeadline().toLocalDate());
         promise.setTillTime(request.getPromiseDeadline().toLocalTime());
 
-        CheckFriendRequest friendRequest = new CheckFriendRequest(request.getFriendName(), request.getUsername());
-        CheckFriendResponse response = friendService.checkFriend(friendRequest);
-        Friend friend = new Friend();
         User user = userRepository.getByUsername(request.getUsername());
+        promise.setWho(user);
 
-        if(!response.getAlreadyFriend()){
+        CheckFriendRequest friendRequest = new CheckFriendRequest(request.getFriendName(), request.getUsername());
+        CheckFriendResponse checkFriendResponse = friendService.checkFriend(friendRequest);
+        Friend friend = new Friend();
+
+        if(!checkFriendResponse.getAlreadyFriend()){
             MakeFriendRequest makeFriendRequest = new MakeFriendRequest(request.getFriendName(), request.getUsername());
             MakeFriendResponse makeFriendResponse = friendService.makeFriend(makeFriendRequest);
             friend.setId(makeFriendResponse.getFriendId());
         } else {
-            friend.setId(response.getFriendId());
-
+            friend.setId(checkFriendResponse.getFriendId());
         }
 
         promise.setWhom(friend);
-        promise.setWho(user);
         log.debug("Promise to save {}", promise);
         promiseRepository.save(promise);
         log.debug("Saved promise: {}", promise);
