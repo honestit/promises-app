@@ -1,5 +1,7 @@
 package honestit.projects.promises.simple.friends.impl;
 
+import honestit.projects.promises.simple.friends.CheckFriendRequest;
+import honestit.projects.promises.simple.friends.CheckFriendResponse;
 import honestit.projects.promises.simple.friends.MakeFriendRequest;
 import honestit.projects.promises.simple.friends.MakeFriendResponse;
 import honestit.projects.promises.simple.friends.domain.Friend;
@@ -72,5 +74,17 @@ class DefaultFriendServiceTest {
 
         MakeFriendRequest request = new MakeFriendRequest("Joe", "User");
         assertThatThrownBy(() -> friendService.makeFriend(request)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    @DisplayName("Check non existing friend")
+    public void givenNonExistingFriend_whenCheckFriend_thenShouldReturnNotFound() {
+        Mockito.when(friendRepository.existsByNameAndOwnerUsername("Joe", "User")).thenReturn(false);
+
+        CheckFriendRequest request = new CheckFriendRequest("Joe", "User");
+        CheckFriendResponse response = friendService.checkFriend(request);
+
+        assertThat(response).isNotNull();
+        assertThat(response).extracting("alreadyFriend").isNotNull().isEqualTo(false);
     }
 }

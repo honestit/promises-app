@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.util.UriUtils;
 
 import javax.validation.Valid;
 
@@ -41,7 +42,7 @@ public class CreateFriendPageController {
             MakeFriendRequest request = new MakeFriendRequest(createFriendForm.getFriendName(), authentication.getName());
             MakeFriendResponse makeFriendResponse = friendService.makeFriend(request);
             log.debug("Response from FriendService: {}", makeFriendResponse);
-            return "redirect:/create-friend?msg=Friend sucessfully created";
+            return "redirect:/create-friend?msg=" + UriUtils.encode("Friend successfully created", "UTF-8");
         } catch (RuntimeException ex) {
             log.warn("Error while creating friend", ex);
             bindingResult.reject(null, ex.getMessage());

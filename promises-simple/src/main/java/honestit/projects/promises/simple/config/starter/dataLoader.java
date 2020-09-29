@@ -1,9 +1,7 @@
 package honestit.projects.promises.simple.config.starter;
 
 import honestit.projects.promises.simple.users.domain.User;
-import honestit.projects.promises.simple.users.domain.UserDetails;
 import honestit.projects.promises.simple.users.domain.UserRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
