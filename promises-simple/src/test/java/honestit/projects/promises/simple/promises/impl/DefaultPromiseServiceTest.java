@@ -57,6 +57,16 @@ class DefaultPromiseServiceTest {
 
             Mockito.verify(friendService, Mockito.times(1)).checkFriend(ArgumentMatchers.any());
         }
+
+        @Test
+        @DisplayName("When make promise to new friend should make friend")
+        public void whenMakePromiseToNewFriendShouldMakeFriend() {
+            Mockito.when(friendService.checkFriend(ArgumentMatchers.any())).thenReturn(new CheckFriendResponse(false, null));
+
+            promiseService.makePromise(defaultRequest);
+
+            Mockito.verify(friendService, Mockito.times(1)).makeFriend(ArgumentMatchers.any());
+        }
     }
 
 
