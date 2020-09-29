@@ -9,5 +9,4 @@ public class CheckFriendRequest {
 
     private String friendName;
     private String username;
-
 }
