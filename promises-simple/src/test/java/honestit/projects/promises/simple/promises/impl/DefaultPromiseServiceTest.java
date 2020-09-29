@@ -3,12 +3,14 @@ package honestit.projects.promises.simple.promises.impl;
 import honestit.projects.promises.simple.friends.CheckFriendResponse;
 import honestit.projects.promises.simple.friends.FriendService;
 import honestit.projects.promises.simple.friends.MakeFriendResponse;
+import honestit.projects.promises.simple.friends.domain.Friend;
 import honestit.projects.promises.simple.promises.MakePromiseRequest;
 import honestit.projects.promises.simple.promises.MakePromiseResponse;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -68,6 +70,24 @@ class DefaultPromiseServiceTest {
             promiseService.makePromise(defaultRequest);
 
             Mockito.verify(friendService, Mockito.times(1)).makeFriend(ArgumentMatchers.any());
+        }
+
+        @Test
+        @DisplayName("When make promise then promise should have a friend")
+        public void whenMakePromiseThenPromiseShouldHaveAFriend() {
+            ArgumentCaptor<Promise> captor = ArgumentCaptor.forClass(Promise.class);
+            Mockito.when(promiseRepository.save(captor.capture())).thenReturn(new Promise());
+            Mockito.when(friendService.checkFriend(ArgumentMatchers.any())).thenReturn(new CheckFriendResponse(true, 1L));
+
+            MakePromiseResponse response = promiseService.makePromise(defaultRequest);
+
+            Assertions.assertThat(captor.getValue()).isNotNull();
+            Assertions.assertThat(captor.getValue().getWhom())
+                    .isNotNull()
+                    .extracting(Friend::getId)
+                        .isNotNull()
+                        .isEqualTo(1L);
+
         }
     }
 
