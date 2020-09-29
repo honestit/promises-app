@@ -1,6 +1,7 @@
 package honestit.projects.promises.simple.promises.impl;
 
 import honestit.projects.promises.simple.promises.*;
+import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,17 @@ public class DefaultPromiseService implements PromiseService {
 
     @Override
     public MakePromiseResponse makePromise(MakePromiseRequest request) {
-        return null;
+        log.debug("Data to register promise: {}", request);
+        Promise promise = new Promise();
+        promise.setTitle(request.getPromiseTitle());
+        promise.setTillDay(request.getPromiseDeadline().toLocalDate());
+        promise.setTillTime(request.getPromiseDeadline().toLocalTime());
+
+        log.debug("Promise to save {}", promise);
+        promiseRepository.save(promise);
+        log.debug("Saved promise: {}", promise);
+
+        return new MakePromiseResponse(promise.getId());
     }
 
     @Override

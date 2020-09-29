@@ -5,10 +5,7 @@ import honestit.projects.promises.simple.promises.MakePromiseResponse;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -20,7 +17,7 @@ class DefaultPromiseServiceTest {
     private DefaultPromiseService promiseService;
     private PromiseRepository promiseRepository;
 
-    @BeforeAll
+    @BeforeEach
     public void prepareTest() {
         promiseRepository = Mockito.mock(PromiseRepository.class);
         promiseService = new DefaultPromiseService(promiseRepository);
