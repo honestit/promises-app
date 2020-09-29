@@ -17,6 +17,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class DefaultFriendServiceTest {
 
@@ -34,7 +35,7 @@ class DefaultFriendServiceTest {
     @Test
     @DisplayName("New friend should be created")
     public void makeNewFriend() {
-        Mockito.when(friendRepository.save(ArgumentMatchers.any(Friend.class))).thenAnswer(invocation -> {
+        Mockito.when(friendRepository.save(any(Friend.class))).thenAnswer(invocation -> {
             invocation.getArgument(0, Friend.class).setId(1L);
             return invocation.getArgument(0, Friend.class);
         });
@@ -54,7 +55,7 @@ class DefaultFriendServiceTest {
         User user = new User();
         user.setId(1L);
         user.setUsername("User");
-        Mockito.when(friendRepository.save(ArgumentMatchers.any())).thenReturn(friend);
+        Mockito.when(friendRepository.save(any())).thenReturn(friend);
         Mockito.when(userRepository.getByUsername("User")).thenReturn(user);
 
         MakeFriendRequest request = new MakeFriendRequest("Joe", "User");
@@ -98,5 +99,21 @@ class DefaultFriendServiceTest {
 
         assertThat(response).isNotNull();
         assertThat(response).extracting("alreadyFriend").isNotNull().isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("Existing friend should have id")
+    public void givenExistingFriend_whenCheckFriend_thenShouldReturnId() {
+        Mockito.when(friendRepository.existsByNameAndOwnerUsername("Joe", "User")).thenReturn(true);
+        Friend joe = new Friend();
+        joe.setId(1L);
+        joe.setName("Joe");
+        Mockito.when(friendRepository.getByNameAndOwnerUsername("Joe", "User")).thenReturn(joe);
+
+        CheckFriendRequest request = new CheckFriendRequest("Joe", "User");
+        CheckFriendResponse response = friendService.checkFriend(request);
+
+        assertThat(response).isNotNull();
+        assertThat(response).extracting("friendId").isNotNull().isEqualTo(1L);
     }
 }
