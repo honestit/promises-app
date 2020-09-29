@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create friend</title>
+</head>
+<body>
+<form method="post" th:object="${form}">
+    <p>
+        <label for="username">Friend name: <input type="text"
+                                               required="true" th:field="*{friendName}" id="username"/>
+        </label>
+        <span th:if="${#fields.hasErrors('friendName')}" th:errors="*{friendName}"></span>
+    </p>
+    <button type="submit">Create</button>
+    <div th:if="${#fields.hasGlobalErrors()}" th:text="${#fields.globalErrors()}"></div>
+</form>
+<div th:if="${param.msg != null}">
+    <span th:text="${param.msg}">
+    </span>
+</div>
+</body>
+</html>
