@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 public class CheckFriendResponse {
 
     private Boolean alreadyFriend;
+    private Long friendId;
 
 }

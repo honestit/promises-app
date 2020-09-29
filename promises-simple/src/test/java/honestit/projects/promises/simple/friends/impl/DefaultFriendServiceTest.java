@@ -93,6 +93,7 @@ class DefaultFriendServiceTest {
     @DisplayName("Check existing friend")
     public void givenExistingFriend_whenCheckFriend_thenShouldReturnFound() {
         Mockito.when(friendRepository.existsByNameAndOwnerUsername("Joe", "User")).thenReturn(true);
+        Mockito.when(friendRepository.getByNameAndOwnerUsername(any(), any())).thenReturn(new Friend());
 
         CheckFriendRequest request = new CheckFriendRequest("Joe", "User");
         CheckFriendResponse response = friendService.checkFriend(request);

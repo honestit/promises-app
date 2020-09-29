@@ -52,9 +52,13 @@ public class DefaultFriendService implements FriendService {
         String friendName = request.getFriendName();
         String username = request.getUsername();
 
-        CheckFriendResponse response = new CheckFriendResponse(true);
+
+        CheckFriendResponse response = new CheckFriendResponse();
 
         if (friendRepository.existsByNameAndOwnerUsername(friendName, username)) {
+            response.setAlreadyFriend(true);
+            Friend friend = friendRepository.getByNameAndOwnerUsername(friendName, username);
+            response.setFriendId(friend.getId());
             return response;
         } else {
             response.setAlreadyFriend(false);
