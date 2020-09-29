@@ -3,6 +3,8 @@ package honestit.projects.promises.simple.promises.impl;
 import honestit.projects.promises.simple.friends.CheckFriendRequest;
 import honestit.projects.promises.simple.friends.CheckFriendResponse;
 import honestit.projects.promises.simple.friends.FriendService;
+import honestit.projects.promises.simple.friends.MakeFriendRequest;
+import honestit.projects.promises.simple.friends.domain.Friend;
 import honestit.projects.promises.simple.promises.*;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
@@ -27,6 +29,11 @@ public class DefaultPromiseService implements PromiseService {
 
         CheckFriendRequest friendRequest = new CheckFriendRequest(request.getFriendName(), request.getUsername());
         CheckFriendResponse response = friendService.checkFriend(friendRequest);
+
+        if(!response.getAlreadyFriend()){
+            MakeFriendRequest makeFriendRequest = new MakeFriendRequest(request.getFriendName(), request.getUsername());
+            friendService.makeFriend(makeFriendRequest);
+        }
 
         log.debug("Promise to save {}", promise);
         promiseRepository.save(promise);

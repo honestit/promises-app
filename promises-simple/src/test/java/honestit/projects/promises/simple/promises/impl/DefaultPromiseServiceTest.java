@@ -10,6 +10,7 @@ import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ class DefaultPromiseServiceTest {
                 invocation.getArgument(0, Promise.class).setId(1L);
                 return invocation.getArgument(0, Promise.class);
             });
+            Mockito.when(friendService.checkFriend(ArgumentMatchers.any())).thenReturn(new CheckFriendResponse(true, 1L));
 
             MakePromiseResponse response = promiseService.makePromise(defaultRequest);
 
@@ -51,7 +53,7 @@ class DefaultPromiseServiceTest {
         @Test
         @DisplayName("When make promise friend should be checked")
         public void whenMakePromiseFriendShouldBeChecked() {
-            Mockito.when(friendService.checkFriend(ArgumentMatchers.any())).thenReturn(new CheckFriendResponse());
+            Mockito.when(friendService.checkFriend(ArgumentMatchers.any())).thenReturn(new CheckFriendResponse(true, 1L));
 
             promiseService.makePromise(defaultRequest);
 
