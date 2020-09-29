@@ -1,5 +1,6 @@
 package honestit.projects.promises.simple.promises.impl;
 
+import honestit.projects.promises.simple.friends.FriendService;
 import honestit.projects.promises.simple.promises.*;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class DefaultPromiseService implements PromiseService {
 
     private final PromiseRepository promiseRepository;
+    private final FriendService friendService;
 
     @Override
     public MakePromiseResponse makePromise(MakePromiseRequest request) {
