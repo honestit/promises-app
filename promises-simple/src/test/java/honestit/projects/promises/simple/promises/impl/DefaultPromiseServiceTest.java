@@ -139,6 +139,9 @@ class DefaultPromiseServiceTest {
             defaultPromise.setKeptDate(null);
             defaultPromise.setTillDay(LocalDate.now());
             defaultPromise.setTillTime(LocalTime.now());
+            User user = new User();
+            user.setUsername("User");
+            defaultPromise.setWho(user);
         }
 
         @Test
@@ -159,7 +162,7 @@ class DefaultPromiseServiceTest {
             Mockito.when(promiseRepository.getOne(1L)).thenReturn(defaultPromise);
             Mockito.when(promiseRepository.save(promiseCapture.capture())).thenReturn(defaultPromise);
 
-            LocalDateTime mark = LocalDateTime.now();
+            LocalDateTime mark = LocalDateTime.now().minusSeconds(10);
             promiseService.keptPromise(defaultRequest);
 
             Promise usedPromise = promiseCapture.getValue();
@@ -203,11 +206,11 @@ class DefaultPromiseServiceTest {
         @DisplayName("When kept promise of other user should throw exception")
         public void whenKeptPromiseOfOtherUserShouldThrowException() {
             User who = new User();
-            who.setUsername("User");
+            who.setUsername("Joe");
             defaultPromise.setWho(who);
             Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
 
-            Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isIn(RuntimeException.class);
+            Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isInstanceOf(RuntimeException.class);
         }
 
     }

@@ -62,6 +62,18 @@ public class DefaultPromiseService implements PromiseService {
     public KeptPromiseResponse keptPromise(KeptPromiseRequest request) {
         Promise promiseById = promiseRepository.getOne(request.getPromiseId());
 
+        if(promiseById.getKept() != null){
+            throw new IllegalStateException("Promise with this id is already kept");
+        }
+
+        User user = promiseById.getWho();
+        String username = user.getUsername();
+        String requestUsername = request.getUsername();
+
+        if(!username.equals(requestUsername)){
+            throw new IllegalStateException("This promise belongs to another user");
+        }
+
         promiseById.setKeptDate(LocalDateTime.now());
 
         LocalDate tillDay = promiseById.getTillDay();
