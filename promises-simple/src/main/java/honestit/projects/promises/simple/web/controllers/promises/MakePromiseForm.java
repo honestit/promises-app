@@ -18,6 +18,7 @@ public class MakePromiseForm {
     @Size(min = 3, max = 12)
     private String friendName;
     @NotBlank
+    @Size(min = 3)
     private String title;
     private String content;
     @NotNull
