@@ -177,8 +177,8 @@ class DefaultPromiseServiceTest {
         }
 
         @Test
-        @DisplayName("When kept promise before deadline promise should be not outdated")
-        public void whenKeptPromiseBeforeDeadlinePromiseShouldBeNotOutdated() {
+        @DisplayName("When kept promise before deadline promise should not be outdated")
+        public void whenKeptPromiseBeforeDeadlinePromiseShouldNotBeOutdated() {
             Promise promise = new Promise();
             promise.setId(1L);
             promise.setTillDay(LocalDate.now().plusDays(1));
