@@ -17,6 +17,11 @@ public class DefaultTimelapseService implements TimelapseService {
         return null;
     }
 
+//    {
+//        IncomingPromisesResponse.PromiseData promiseData = IncomingPromisesResponse.PromiseData.builder()
+//                .title("Abc").friendName("Joe").tillDate(LocalDate.now()).tillTime(LocalTime.now()).build();
+//    }
+
     @Override
     public IncomingPromisesResponse incomingPromises(IncomingPromisesRequest request) {
         return null;

@@ -74,14 +74,14 @@ class DefaultTimelapseServiceTest {
         @DisplayName("Should get promises only for current user")
         public void shouldGetPromisesOnlyForCurrentUser() {
             Mockito.when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
-                    defaultRequest.getUsername(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+                    ArgumentMatchers.eq(defaultRequest.getUsername()), ArgumentMatchers.any(), ArgumentMatchers.any()))
                     .thenReturn(new ArrayList<>());
 
             timelapseService.incomingPromises(defaultRequest);
 
             Mockito.verify(promiseRepository, Mockito.times(1))
                     .findAllNullKeptPromisesForUserWithDeadlineBefore(
-                            defaultRequest.getUsername(), ArgumentMatchers.any(), ArgumentMatchers.any());
+                            ArgumentMatchers.eq(defaultRequest.getUsername()), ArgumentMatchers.any(), ArgumentMatchers.any());
         }
 
         @Test
@@ -89,7 +89,7 @@ class DefaultTimelapseServiceTest {
         public void shouldGetPromisesWithValidData() {
 
             Mockito.when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
-                    "User", ArgumentMatchers.any(), ArgumentMatchers.any()))
+                    ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
                     .thenReturn(List.of(defaultPromise, defaultPromise, defaultPromise));
 
             IncomingPromisesResponse response = timelapseService.incomingPromises(defaultRequest);
