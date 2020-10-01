@@ -19,7 +19,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @DisplayName("Promises Service Tests")
 class DefaultPromiseServiceTest {
@@ -158,6 +160,20 @@ class DefaultPromiseServiceTest {
             Assertions.assertThat(usedPromise).isNotNull();
             Assertions.assertThat(usedPromise.getKept()).isNotNull().isTrue();
             Assertions.assertThat(usedPromise.getKeptDate()).isNotNull().isAfter(mark);
+        }
+
+        @Test
+        @DisplayName("When kept promise after deadline promise should be outdated")
+        public void whenKeptPromiseAfterDeadlinePromiseShouldBeOutdated() {
+            Promise promise = new Promise();
+            promise.setId(1L);
+            promise.setTillDay(LocalDate.now().minusDays(1));
+            promise.setTillTime(LocalTime.now());
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(promise);
+
+            KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
+
+            Assertions.assertThat(response.getOutdated()).isTrue();
         }
 
     }
