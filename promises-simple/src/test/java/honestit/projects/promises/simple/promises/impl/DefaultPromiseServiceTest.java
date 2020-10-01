@@ -136,7 +136,26 @@ class DefaultPromiseServiceTest {
 
             Assertions.assertThat(response).isNotNull();
             Assertions.assertThat(response.getOutdated()).isNotNull();
+        }
 
+        @Test
+        @DisplayName("When kept promise then promise should be kept")
+        public void whenKeptPromiseThenPromiseShouldBeKept() {
+            ArgumentCaptor<Promise> promiseCapture = ArgumentCaptor.forClass(Promise.class);
+            Promise promise = new Promise();
+            promise.setId(1L);
+            promise.setKept(null);
+            promise.setKeptDate(null);
+            Mockito.when(promiseRepository.getOne(1L)).thenReturn(promise);
+            Mockito.when(promiseRepository.save(promiseCapture.capture())).thenReturn(promise);
+
+            LocalDateTime mark = LocalDateTime.now();
+            promiseService.keptPromise(defaultRequest);
+
+            Promise usedPromise = promiseCapture.getValue();
+            Assertions.assertThat(usedPromise).isNotNull();
+            Assertions.assertThat(usedPromise.getKept()).isNotNull().isTrue();
+            Assertions.assertThat(usedPromise.getKeptDate()).isNotNull().isAfter(mark);
         }
 
     }
