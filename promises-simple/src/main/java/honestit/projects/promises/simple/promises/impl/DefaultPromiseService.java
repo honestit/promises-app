@@ -56,6 +56,6 @@ public class DefaultPromiseService implements PromiseService {
 
     @Override
     public KeptPromiseResponse keptPromise(KeptPromiseRequest request) {
-        return null;
+        return new KeptPromiseResponse(true);
     }
 }
