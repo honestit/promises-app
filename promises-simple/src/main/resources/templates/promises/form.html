@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Make promise</title>
+</head>
+<body>
+<form method="post" th:object="${form}">
+    <p>
+        <label for="friendName">Friend name: <input type="text"
+                                               required="true" th:field="*{friendName}" id="friendName" />
+        </label>
+        <span th:if="${#fields.hasErrors('friendName')}" th:errors="*{friendName}"></span>
+    </p>
+    <p>
+        <label for="title">Promise title:
+            <input type="text" required="true" th:field="*{title}" id="title"/>
+        </label>
+        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+    </p>
+    <p>
+        <label th:for="*{tillDate}">Promise deadline - date:
+            <input type="date" required="true" th:field="*{tillDate}"/>
+        </label>
+        <span th:if="${#fields.hasErrors('tillDate')}" th:errors="*{tillDate}"></span>
+    </p>
+    <p>
+        <label th:for="*{tillTime}">Promise deadline - time:
+            <input type="time" required="true" th:field="*{tillTime}"/>
+        </label>
+        <span th:if="${#fields.hasErrors('tillTime')}" th:errors="*{tillTime}"></span>
+    </p>
+
+    <button type="submit">Make promise</button>
+
+</form>
+</body>
+</html>
