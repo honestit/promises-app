@@ -38,6 +38,14 @@ class DefaultTimelapseServiceTest {
 
             Assertions.assertThat(response).isNotNull();
         }
+
+        @Test
+        @DisplayName("Should return not null promises list")
+        public void shouldReturnNotNullPromisesList() {
+            IncomingPromisesResponse response = timelapseService.incomingPromises(defaultRequest);
+
+            Assertions.assertThat(response.getPromises()).isNotNull();
+        }
     }
 
 }
