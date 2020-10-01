@@ -1,5 +1,7 @@
 package honestit.projects.promises.simple.timelapse.impl;
 
+import honestit.projects.promises.simple.promises.domain.Promise;
+import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import honestit.projects.promises.simple.timelapse.IncomingPromisesRequest;
 import honestit.projects.promises.simple.timelapse.IncomingPromisesResponse;
 import org.assertj.core.api.Assertions;
@@ -7,6 +9,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
+import org.mockito.internal.verification.api.VerificationData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,9 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultTimelapseServiceTest {
 
     private DefaultTimelapseService timelapseService;
+    private PromiseRepository promiseRepository;
 
     @BeforeEach
     public void prepareTests() {
+        promiseRepository = Mockito.mock(PromiseRepository.class);
         timelapseService = new DefaultTimelapseService();
     }
 
@@ -28,7 +39,7 @@ class DefaultTimelapseServiceTest {
 
         @BeforeEach
         public void prepareTests() {
-            defaultRequest = new IncomingPromisesRequest();
+            defaultRequest = new IncomingPromisesRequest("User");
         }
 
         @Test
@@ -45,6 +56,20 @@ class DefaultTimelapseServiceTest {
             IncomingPromisesResponse response = timelapseService.incomingPromises(defaultRequest);
 
             Assertions.assertThat(response.getPromises()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("Should get promises only for current user")
+        public void shouldGetPromisesOnlyForCurrentUser() {
+            Mockito.when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
+                    "User", ArgumentMatchers.any(), ArgumentMatchers.any()))
+                    .thenReturn(new ArrayList<>());
+
+            timelapseService.incomingPromises(defaultRequest);
+
+            Mockito.verify(promiseRepository, Mockito.times(1))
+                    .findAllNullKeptPromisesForUserWithDeadlineBefore(
+                            "User", ArgumentMatchers.any(), ArgumentMatchers.any());
         }
     }
 
