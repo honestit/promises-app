@@ -28,8 +28,6 @@ public class DefaultTimelapseService implements TimelapseService {
     @Override
     public IncomingPromisesResponse incomingPromises(IncomingPromisesRequest request) {
 
-
-
         return new IncomingPromisesResponse();
     }
 }
