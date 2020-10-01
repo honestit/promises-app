@@ -11,17 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.api.VerificationData;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("DefaultTimelapseService unit tests")
 class DefaultTimelapseServiceTest {
@@ -32,7 +28,7 @@ class DefaultTimelapseServiceTest {
     @BeforeEach
     public void prepareTests() {
         promiseRepository = Mockito.mock(PromiseRepository.class);
-        timelapseService = new DefaultTimelapseService();
+        timelapseService = new DefaultTimelapseService(promiseRepository);
     }
 
     @Nested
@@ -78,14 +74,14 @@ class DefaultTimelapseServiceTest {
         @DisplayName("Should get promises only for current user")
         public void shouldGetPromisesOnlyForCurrentUser() {
             Mockito.when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
-                    "User", ArgumentMatchers.any(), ArgumentMatchers.any()))
+                    defaultRequest.getUsername(), ArgumentMatchers.any(), ArgumentMatchers.any()))
                     .thenReturn(new ArrayList<>());
 
             timelapseService.incomingPromises(defaultRequest);
 
             Mockito.verify(promiseRepository, Mockito.times(1))
                     .findAllNullKeptPromisesForUserWithDeadlineBefore(
-                            "User", ArgumentMatchers.any(), ArgumentMatchers.any());
+                            defaultRequest.getUsername(), ArgumentMatchers.any(), ArgumentMatchers.any());
         }
 
         @Test
