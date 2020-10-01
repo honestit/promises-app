@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +29,25 @@ public class DefaultTimelapseService implements TimelapseService {
         LocalDate tillDate = LocalDate.now();
         LocalTime tillTime = LocalTime.now();
         List<Promise> promises = promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(request.getUsername(), tillDate, tillTime);
+
+        /*
+
+        //Alternative
+
+        List<IncomingPromisesResponse.PromiseData> promisesData = new ArrayList<>();
+        for (Promise promise : promises) {
+            IncomingPromisesResponse.PromiseData promiseData = IncomingPromisesResponse.PromiseData.builder()
+                    .title(promise.getTitle())
+                    .friendName(promise.getWhom().getName())
+                    .tillDate(promise.getTillDay())
+                    .tillTime(promise.getTillTime())
+                    .build();
+            promisesData.add(promiseData);
+        }
+        return new IncomingPromisesResponse(promisesData);
+
+         */
+
 
         IncomingPromisesResponse response = new IncomingPromisesResponse();
         promises.stream()
