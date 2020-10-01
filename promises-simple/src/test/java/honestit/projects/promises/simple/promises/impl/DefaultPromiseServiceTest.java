@@ -4,6 +4,8 @@ import honestit.projects.promises.simple.friends.CheckFriendResponse;
 import honestit.projects.promises.simple.friends.FriendService;
 import honestit.projects.promises.simple.friends.MakeFriendResponse;
 import honestit.projects.promises.simple.friends.domain.Friend;
+import honestit.projects.promises.simple.promises.KeptPromiseRequest;
+import honestit.projects.promises.simple.promises.KeptPromiseResponse;
 import honestit.projects.promises.simple.promises.MakePromiseRequest;
 import honestit.projects.promises.simple.promises.MakePromiseResponse;
 import honestit.projects.promises.simple.promises.domain.Promise;
@@ -119,5 +121,23 @@ class DefaultPromiseServiceTest {
                     .isNotNull()
                     .isEqualTo("User");
         }
+    }
+
+    @Nested
+    @DisplayName("Promises Service tests - Method kept promise")
+    class KeptPromiseTest {
+
+        private final KeptPromiseRequest defaultRequest = new KeptPromiseRequest(1L, "User");
+
+        @Test
+        @DisplayName("When kept promise then should get valid response")
+        public void whenKeptPromiseThenShouldGetValidResponse() {
+            KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
+
+            Assertions.assertThat(response).isNotNull();
+            Assertions.assertThat(response.getOutdated()).isNotNull();
+
+        }
+
     }
 }
