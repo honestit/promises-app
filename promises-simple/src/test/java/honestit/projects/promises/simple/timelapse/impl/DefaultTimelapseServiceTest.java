@@ -5,15 +5,13 @@ import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import honestit.projects.promises.simple.timelapse.IncomingPromisesRequest;
 import honestit.projects.promises.simple.timelapse.IncomingPromisesResponse;
+import honestit.projects.promises.simple.timelapse.IncomingPromisesResponse.PromiseData;
 import honestit.projects.promises.simple.users.domain.User;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
-import org.assertj.core.internal.Conditions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -21,6 +19,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @DisplayName("DefaultTimelapseService unit tests")
 class DefaultTimelapseServiceTest {
@@ -30,7 +32,7 @@ class DefaultTimelapseServiceTest {
 
     @BeforeEach
     public void prepareTests() {
-        promiseRepository = Mockito.mock(PromiseRepository.class);
+        promiseRepository = mock(PromiseRepository.class);
         timelapseService = new DefaultTimelapseService(promiseRepository);
     }
 
@@ -62,7 +64,7 @@ class DefaultTimelapseServiceTest {
         public void shouldReturnNonNullResponse() {
             IncomingPromisesResponse response = timelapseService.incomingPromises(defaultRequest);
 
-            Assertions.assertThat(response).isNotNull();
+            assertThat(response).isNotNull();
         }
 
         @Test
@@ -70,45 +72,45 @@ class DefaultTimelapseServiceTest {
         public void shouldReturnNotNullPromisesList() {
             IncomingPromisesResponse response = timelapseService.incomingPromises(defaultRequest);
 
-            Assertions.assertThat(response.getPromises()).isNotNull();
+            assertThat(response.getPromises()).isNotNull();
         }
 
         @Test
         @DisplayName("Should get promises only for current user")
         public void shouldGetPromisesOnlyForCurrentUser() {
-            Mockito.when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
-                    ArgumentMatchers.eq(defaultRequest.getUsername()), ArgumentMatchers.any(), ArgumentMatchers.any()))
+            when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
+                    eq(defaultRequest.getUsername()), any(), any()))
                     .thenReturn(new ArrayList<>());
 
             timelapseService.incomingPromises(defaultRequest);
 
-            Mockito.verify(promiseRepository, Mockito.times(1))
+            verify(promiseRepository, times(1))
                     .findAllNullKeptPromisesForUserWithDeadlineBefore(
-                            ArgumentMatchers.eq(defaultRequest.getUsername()), ArgumentMatchers.any(), ArgumentMatchers.any());
+                            eq(defaultRequest.getUsername()), any(), any());
         }
 
         @Test
         @DisplayName("Should get all promises with valid data")
         public void shouldGetPromisesWithValidData() {
 
-            Mockito.when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
-                    ArgumentMatchers.anyString(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+            when(promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(
+                    anyString(), any(), any()))
                     .thenReturn(List.of(defaultPromise, defaultPromise, defaultPromise));
 
             IncomingPromisesResponse response = timelapseService.incomingPromises(defaultRequest);
 
-            Assertions.assertThat(response.getPromises()).hasSize(3);
-            Assertions.assertThat(response.getPromises())
-                    .extracting(IncomingPromisesResponse.PromiseData::getFriendName)
+            assertThat(response.getPromises()).hasSize(3);
+            assertThat(response.getPromises())
+                    .extracting(PromiseData::getFriendName)
                     .containsOnly(defaultPromise.getWhom().getName());
-            Assertions.assertThat(response.getPromises())
-                    .extracting(IncomingPromisesResponse.PromiseData::getTitle)
+            assertThat(response.getPromises())
+                    .extracting(PromiseData::getTitle)
                     .containsOnly(defaultPromise.getTitle());
-            Assertions.assertThat(response.getPromises())
-                    .extracting(IncomingPromisesResponse.PromiseData::getTillDate)
+            assertThat(response.getPromises())
+                    .extracting(PromiseData::getTillDate)
                     .containsOnly(defaultPromise.getTillDay());
-            Assertions.assertThat(response.getPromises())
-                    .extracting(IncomingPromisesResponse.PromiseData::getTillTime)
+            assertThat(response.getPromises())
+                    .extracting(PromiseData::getTillTime)
                     .containsOnly(defaultPromise.getTillTime());
 
         }
