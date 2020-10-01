@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Service
 @Slf4j @RequiredArgsConstructor
 public class DefaultPromiseService implements PromiseService {
@@ -56,6 +60,34 @@ public class DefaultPromiseService implements PromiseService {
 
     @Override
     public KeptPromiseResponse keptPromise(KeptPromiseRequest request) {
-        return null;
+        Promise promiseById = promiseRepository.getOne(request.getPromiseId());
+
+        if(promiseById.getKept() != null){
+            throw new IllegalStateException("Promise with this id is already kept");
+        }
+
+        User user = promiseById.getWho();
+        String username = user.getUsername();
+        String requestUsername = request.getUsername();
+
+        if(!username.equals(requestUsername)){
+            throw new IllegalStateException("This promise belongs to another user");
+        }
+
+        promiseById.setKeptDate(LocalDateTime.now());
+
+        LocalDate tillDay = promiseById.getTillDay();
+        LocalTime tillTime = promiseById.getTillTime();
+        LocalDateTime tillDayAndTime = tillDay.atTime(tillTime);
+
+        if(tillDayAndTime.isAfter(promiseById.getKeptDate())) {
+            promiseById.setKept(true);
+        } else {
+            promiseById.setKept(false);
+        }
+
+        promiseRepository.save(promiseById);
+
+        return new KeptPromiseResponse(!promiseById.getKept());
     }
 }

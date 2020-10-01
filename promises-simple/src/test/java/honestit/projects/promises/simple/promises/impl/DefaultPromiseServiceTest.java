@@ -4,6 +4,8 @@ import honestit.projects.promises.simple.friends.CheckFriendResponse;
 import honestit.projects.promises.simple.friends.FriendService;
 import honestit.projects.promises.simple.friends.MakeFriendResponse;
 import honestit.projects.promises.simple.friends.domain.Friend;
+import honestit.projects.promises.simple.promises.KeptPromiseRequest;
+import honestit.projects.promises.simple.promises.KeptPromiseResponse;
 import honestit.projects.promises.simple.promises.MakePromiseRequest;
 import honestit.projects.promises.simple.promises.MakePromiseResponse;
 import honestit.projects.promises.simple.promises.domain.Promise;
@@ -17,7 +19,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @DisplayName("Promises Service Tests")
 class DefaultPromiseServiceTest {
@@ -119,5 +123,95 @@ class DefaultPromiseServiceTest {
                     .isNotNull()
                     .isEqualTo("User");
         }
+    }
+
+    @Nested
+    @DisplayName("Promises Service tests - Method kept promise")
+    class KeptPromiseTest {
+
+        private final KeptPromiseRequest defaultRequest = new KeptPromiseRequest(1L, "User");
+        private final Promise defaultPromise = new Promise();
+
+        @BeforeEach
+        public void prepare() {
+            defaultPromise.setId(1L);
+            defaultPromise.setKept(null);
+            defaultPromise.setKeptDate(null);
+            defaultPromise.setTillDay(LocalDate.now());
+            defaultPromise.setTillTime(LocalTime.now());
+            User user = new User();
+            user.setUsername("User");
+            defaultPromise.setWho(user);
+        }
+
+        @Test
+        @DisplayName("When kept promise then should get valid response")
+        public void whenKeptPromiseThenShouldGetValidResponse() {
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
+
+            Assertions.assertThat(response).isNotNull();
+            Assertions.assertThat(response.getOutdated()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("When kept promise then promise should be kept")
+        public void whenKeptPromiseThenPromiseShouldBeKept() {
+            ArgumentCaptor<Promise> promiseCapture = ArgumentCaptor.forClass(Promise.class);
+            Mockito.when(promiseRepository.getOne(1L)).thenReturn(defaultPromise);
+            Mockito.when(promiseRepository.save(promiseCapture.capture())).thenReturn(defaultPromise);
+
+            LocalDateTime mark = LocalDateTime.now().minusSeconds(10);
+            promiseService.keptPromise(defaultRequest);
+
+            Promise usedPromise = promiseCapture.getValue();
+            Assertions.assertThat(usedPromise).isNotNull();
+            Assertions.assertThat(usedPromise.getKept()).isNotNull();
+            Assertions.assertThat(usedPromise.getKeptDate()).isNotNull().isAfter(mark);
+        }
+
+        @Test
+        @DisplayName("When kept promise after deadline promise should be outdated")
+        public void whenKeptPromiseAfterDeadlinePromiseShouldBeOutdated() {
+            defaultPromise.setTillDay(LocalDate.now().minusDays(1));
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
+
+            Assertions.assertThat(response.getOutdated()).isTrue();
+        }
+
+        @Test
+        @DisplayName("When kept promise before deadline promise should not be outdated")
+        public void whenKeptPromiseBeforeDeadlinePromiseShouldNotBeOutdated() {
+            defaultPromise.setTillDay(LocalDate.now().plusDays(1));
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
+
+            Assertions.assertThat(response.getOutdated()).isFalse();
+        }
+
+        @Test
+        @DisplayName("When kept promise already kept should throw exception")
+        public void whenKeptPromiseAlreadyKeptShouldThrowException() {
+            defaultPromise.setKept(true);
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isInstanceOf(RuntimeException.class);
+        }
+
+        @Test
+        @DisplayName("When kept promise of other user should throw exception")
+        public void whenKeptPromiseOfOtherUserShouldThrowException() {
+            User who = new User();
+            who.setUsername("Joe");
+            defaultPromise.setWho(who);
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isInstanceOf(RuntimeException.class);
+        }
+
     }
 }
