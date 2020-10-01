@@ -1,7 +1,10 @@
 package honestit.projects.promises.simple.timelapse.impl;
 
+import honestit.projects.promises.simple.friends.domain.Friend;
+import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import honestit.projects.promises.simple.timelapse.*;
+import honestit.projects.promises.simple.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,9 @@ public class DefaultTimelapseService implements TimelapseService {
 
     @Override
     public IncomingPromisesResponse incomingPromises(IncomingPromisesRequest request) {
-        return null;
+
+
+
+        return new IncomingPromisesResponse();
     }
 }
