@@ -199,5 +199,16 @@ class DefaultPromiseServiceTest {
             Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isInstanceOf(RuntimeException.class);
         }
 
+        @Test
+        @DisplayName("When kept promise of other user should throw exception")
+        public void whenKeptPromiseOfOtherUserShouldThrowException() {
+            User who = new User();
+            who.setUsername("User");
+            defaultPromise.setWho(who);
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isIn(RuntimeException.class);
+        }
+
     }
 }
