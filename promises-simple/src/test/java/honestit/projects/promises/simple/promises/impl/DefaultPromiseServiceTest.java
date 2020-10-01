@@ -132,6 +132,8 @@ class DefaultPromiseServiceTest {
         @Test
         @DisplayName("When kept promise then should get valid response")
         public void whenKeptPromiseThenShouldGetValidResponse() {
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(new Promise());
+
             KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
 
             Assertions.assertThat(response).isNotNull();

@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @Slf4j @RequiredArgsConstructor
 public class DefaultPromiseService implements PromiseService {
@@ -56,6 +58,14 @@ public class DefaultPromiseService implements PromiseService {
 
     @Override
     public KeptPromiseResponse keptPromise(KeptPromiseRequest request) {
+
+        Promise promiseById = promiseRepository.getOne(request.getPromiseId());
+
+        promiseById.setKept(true);
+        promiseById.setKeptDate(LocalDateTime.now());
+
+        promiseRepository.save(promiseById);
+
         return new KeptPromiseResponse(true);
     }
 }
