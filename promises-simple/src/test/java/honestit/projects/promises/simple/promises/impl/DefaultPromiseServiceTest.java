@@ -176,5 +176,19 @@ class DefaultPromiseServiceTest {
             Assertions.assertThat(response.getOutdated()).isTrue();
         }
 
+        @Test
+        @DisplayName("When kept promise before deadline promise should be not outdated")
+        public void whenKeptPromiseBeforeDeadlinePromiseShouldBeNotOutdated() {
+            Promise promise = new Promise();
+            promise.setId(1L);
+            promise.setTillDay(LocalDate.now().plusDays(1));
+            promise.setTillTime(LocalTime.now());
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(promise);
+
+            KeptPromiseResponse response = promiseService.keptPromise(defaultRequest);
+
+            Assertions.assertThat(response.getOutdated()).isFalse();
+        }
+
     }
 }
