@@ -1,13 +1,15 @@
 package honestit.projects.promises.simple.timelapse.impl;
 
-import honestit.projects.promises.simple.friends.domain.Friend;
 import honestit.projects.promises.simple.promises.domain.Promise;
 import honestit.projects.promises.simple.promises.domain.PromiseRepository;
 import honestit.projects.promises.simple.timelapse.*;
-import honestit.projects.promises.simple.users.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @Slf4j @RequiredArgsConstructor
@@ -20,14 +22,23 @@ public class DefaultTimelapseService implements TimelapseService {
         return null;
     }
 
-//    {
-//        IncomingPromisesResponse.PromiseData promiseData = IncomingPromisesResponse.PromiseData.builder()
-//                .title("Abc").friendName("Joe").tillDate(LocalDate.now()).tillTime(LocalTime.now()).build();
-//    }
-
     @Override
     public IncomingPromisesResponse incomingPromises(IncomingPromisesRequest request) {
 
-        return new IncomingPromisesResponse();
+        LocalDate tillDate = LocalDate.now();
+        LocalTime tillTime = LocalTime.now();
+        List<Promise> promises = promiseRepository.findAllNullKeptPromisesForUserWithDeadlineBefore(request.getUsername(), tillDate, tillTime);
+
+        IncomingPromisesResponse response = new IncomingPromisesResponse();
+        promises.stream()
+                .map(
+                promise -> IncomingPromisesResponse.PromiseData.builder()
+                        .title(promise.getTitle())
+                        .friendName(promise.getWhom().getName())
+                        .tillDate(promise.getTillDay())
+                        .tillTime(promise.getTillTime())
+                        .build())
+                .forEach(response.getPromises()::add);
+        return response;
     }
 }

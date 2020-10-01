@@ -7,10 +7,13 @@ import honestit.projects.promises.simple.timelapse.IncomingPromisesRequest;
 import honestit.projects.promises.simple.timelapse.IncomingPromisesResponse;
 import honestit.projects.promises.simple.users.domain.User;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Condition;
+import org.assertj.core.internal.Conditions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 
@@ -96,17 +99,17 @@ class DefaultTimelapseServiceTest {
 
             Assertions.assertThat(response.getPromises()).hasSize(3);
             Assertions.assertThat(response.getPromises())
-                    .flatExtracting(IncomingPromisesResponse.PromiseData::getFriendName)
-                    .isEqualTo(defaultPromise.getWhom().getName());
+                    .extracting(IncomingPromisesResponse.PromiseData::getFriendName)
+                    .containsOnly(defaultPromise.getWhom().getName());
             Assertions.assertThat(response.getPromises())
-                    .flatExtracting(IncomingPromisesResponse.PromiseData::getTitle)
-                    .isEqualTo(defaultPromise.getTitle());
+                    .extracting(IncomingPromisesResponse.PromiseData::getTitle)
+                    .containsOnly(defaultPromise.getTitle());
             Assertions.assertThat(response.getPromises())
-                    .flatExtracting(IncomingPromisesResponse.PromiseData::getTillDate)
-                    .isEqualTo(defaultPromise.getTillDay());
+                    .extracting(IncomingPromisesResponse.PromiseData::getTillDate)
+                    .containsOnly(defaultPromise.getTillDay());
             Assertions.assertThat(response.getPromises())
-                    .flatExtracting(IncomingPromisesResponse.PromiseData::getTillTime)
-                    .isEqualTo(defaultPromise.getTillTime());
+                    .extracting(IncomingPromisesResponse.PromiseData::getTillTime)
+                    .containsOnly(defaultPromise.getTillTime());
 
         }
     }
