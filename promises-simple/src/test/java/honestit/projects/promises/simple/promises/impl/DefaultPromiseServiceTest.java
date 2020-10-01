@@ -190,5 +190,14 @@ class DefaultPromiseServiceTest {
             Assertions.assertThat(response.getOutdated()).isFalse();
         }
 
+        @Test
+        @DisplayName("When kept promise already kept should throw exception")
+        public void whenKeptPromiseAlreadyKeptShouldThrowException() {
+            defaultPromise.setKept(true);
+            Mockito.when(promiseRepository.getOne(ArgumentMatchers.any())).thenReturn(defaultPromise);
+
+            Assertions.assertThatThrownBy(() -> promiseService.keptPromise(defaultRequest)).isInstanceOf(RuntimeException.class);
+        }
+
     }
 }
